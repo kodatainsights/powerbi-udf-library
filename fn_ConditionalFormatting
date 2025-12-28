@@ -1,0 +1,12 @@
+  DEFINE FUNCTION ConditionalFormatting = (KPI_Value: int64) =>
+
+	var Color = 
+		SWITCH(TRUE(),
+			ISBLANK ( KPI_Value ), BLANK(),
+			KPI_Value > 0, "#006B3D",	//Green
+			KPI_Value < 0, "#D61F1F",    //Red
+			BLANK()
+		)
+		
+	RETURN
+		Color
