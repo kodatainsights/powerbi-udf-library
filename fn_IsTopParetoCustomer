@@ -1,0 +1,45 @@
+FUNCTION fn_TopParetoCustomer = (KPI_Name : expr, Pct : scalar) =>
+    
+	VAR __pct = COALESCE ( Pct, 0.8 )
+	
+    VAR __ranked =
+        ADDCOLUMNS (
+            ALLSELECTED ( Fact_Sales[CustomerName] ),
+            "RankedSales", CALCULATE (KPI_Name)
+        )
+
+    VAR __rankedNonBlank =
+        FILTER ( __ranked, NOT ISBLANK ( [RankedSales] ) )
+
+    VAR __totalAll =
+        SUMX ( __rankedNonBlank, [RankedSales] )
+
+    -- Cumulative: sum sales of all customers with sales >= current customer's sales
+    VAR __withCum =
+        ADDCOLUMNS (
+            __rankedNonBlank,
+            "CummulativeSales",
+                VAR s = [RankedSales]
+                RETURN
+                    SUMX ( FILTER ( __rankedNonBlank, [RankedSales] >= s ), [RankedSales] )
+        )
+
+    VAR __currCustomer = SELECTEDVALUE ( Fact_Sales[CustomerName] )
+
+    VAR __cumForCurr =
+        MAXX ( FILTER ( __withCum, Fact_Sales[CustomerName] = __currCustomer ), [CummulativeSales] )
+
+    VAR __cumPct =
+        DIVIDE ( __cumForCurr, __totalAll )
+
+    RETURN
+        IF (
+            ISBLANK ( __currCustomer ) || ISBLANK ( __totalAll ) || __totalAll = 0,
+            BLANK(),
+            IF ( __cumPct <= __pct, 1, 0 )
+        )
+
+EVALUATE
+    {
+        fn_TopParetoCustomer([KPI_Name], 0.08)
+    }
