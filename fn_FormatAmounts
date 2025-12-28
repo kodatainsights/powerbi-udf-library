@@ -1,0 +1,13 @@
+DEFINE FUNCTION
+FormatAmounts = () =>
+VAR _value = SELECTEDMEASURE()
+VAR _absvalue = ABS( _value )
+VAR _fstring =
+    SWITCH(TRUE(),
+        _absvalue >= 1e9, "#,##0,,,.00M",
+        _absvalue >= 1e6, "#,##0,,.0M",
+        _absvalue >= 1e3, "#,##0,.0K",
+        "#,##0"
+    )
+RETURN
+_fstring
