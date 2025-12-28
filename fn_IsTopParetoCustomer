@@ -1,4 +1,4 @@
-FUNCTION fn_TopParetoCustomer = (KPI_Name : expr, Pct : scalar) =>
+DEFINE FUNCTION fn_TopParetoCustomer = (KPI_Name : expr, Pct : scalar) =>
     
 	VAR __pct = COALESCE ( Pct, 0.8 )
 	
