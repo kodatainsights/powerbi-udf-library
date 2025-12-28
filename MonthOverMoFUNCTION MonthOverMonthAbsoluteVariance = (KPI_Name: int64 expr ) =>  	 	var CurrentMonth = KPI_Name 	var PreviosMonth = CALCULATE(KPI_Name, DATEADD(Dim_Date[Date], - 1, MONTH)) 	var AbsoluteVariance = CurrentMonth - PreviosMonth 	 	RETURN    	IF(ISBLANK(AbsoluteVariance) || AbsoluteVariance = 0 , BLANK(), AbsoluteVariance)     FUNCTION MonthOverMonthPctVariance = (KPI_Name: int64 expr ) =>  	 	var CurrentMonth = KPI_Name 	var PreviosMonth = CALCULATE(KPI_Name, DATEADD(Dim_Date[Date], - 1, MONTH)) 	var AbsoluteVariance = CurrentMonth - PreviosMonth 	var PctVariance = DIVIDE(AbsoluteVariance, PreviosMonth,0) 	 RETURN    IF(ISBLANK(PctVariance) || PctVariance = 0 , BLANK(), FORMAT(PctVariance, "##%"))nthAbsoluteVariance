@@ -1,0 +1,21 @@
+DEFINE
+//UDF for calculating absolute KPI variance month over month
+FUNCTION MonthOverMonthAbsoluteVariance = (KPI_Name: int64 expr ) => 
+	
+	var CurrentMonth = KPI_Name
+	var PreviosMonth = CALCULATE(KPI_Name, DATEADD(Dim_Date[Date], - 1, MONTH))
+	var AbsoluteVariance = CurrentMonth - PreviosMonth
+	
+	RETURN
+   	IF(ISBLANK(AbsoluteVariance) || AbsoluteVariance = 0 , BLANK(), AbsoluteVariance)
+    
+//UDF for calculating percent KPI variance month over month
+FUNCTION MonthOverMonthPctVariance = (KPI_Name: int64 expr ) => 
+	
+	var CurrentMonth = KPI_Name
+	var PreviosMonth = CALCULATE(KPI_Name, DATEADD(Dim_Date[Date], - 1, MONTH))
+	var AbsoluteVariance = CurrentMonth - PreviosMonth
+	var PctVariance = DIVIDE(AbsoluteVariance, PreviosMonth,0)
+	
+RETURN
+   IF(ISBLANK(PctVariance) || PctVariance = 0 , BLANK(), FORMAT(PctVariance, "##%"))
