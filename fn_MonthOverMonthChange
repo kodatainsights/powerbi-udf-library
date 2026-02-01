@@ -18,4 +18,4 @@ FUNCTION MonthOverMonthPctVariance = (KPI_Name: int64 expr ) =>
 	var PctVariance = DIVIDE(AbsoluteVariance, PreviosMonth,0)
 	
 RETURN
-   IF(ISBLANK(PctVariance) || PctVariance = 0 , BLANK(), FORMAT(PctVariance, "##%"))
+   IF(ISBLANK(PctVariance) || PctVariance = 0 , BLANK(), PctVariance)
